@@ -12,26 +12,52 @@ $(document).ready(function(){
 
   };
 
+  var handle_win = function() {
+    alert('Good Job! You found all the matches in ' +num_clicks+ ' clicks!');
+    window.location.href = window.location.href
+  };
+
+  var is_game_over = function() {
+    return $('.tile.matched').size() == tiles.length
+  };
+
+  var is_two_selected = function() {
+    return (selected.length == 2)
+  };
+
+  var increment_click_counter = function() {
+    num_clicks++;
+  };
+
+  var activate_tile = function(tile) {
+    tile.addClass('active');
+    selected.push(tile);
+  };
+
+  var deactivate_tiles = function() {
+    $('.tile.active').removeClass('active');
+    selected = [];
+  }
+
   var handle_click = function(tile) {
     var tile = $(this);
     if (tile.hasClass('active') || tile.hasClass('matched')) {
       return false;
     }
-    if (selected.length == 2) {
-      $('.tile.active').removeClass('active');
-      selected = [];
+    if (is_two_selected()) {
+      deactivate_tiles();
     }
-    num_clicks++;
-    tile.addClass('active');
-    selected.push(tile);
+
+    increment_click_counter();
+    activate_tile(tile);
+
     // match?
     if (selected.length == 2 && is_current_selection_a_match()) {
       $.each(selected, function(index, matched_tile) {
         matched_tile.addClass('matched');
       });
-      if ($('.tile.matched').size() == tiles.length) {
-        alert('Good Job! You found all the matches in ' +num_clicks+ ' clicks!');
-        window.location.href = window.location.href
+      if (is_game_over()) {
+        handle_win();
       }
     };
   }
